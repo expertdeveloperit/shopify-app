@@ -15,7 +15,7 @@ const apiSecret = process.env.SHOPIFY_API_SECRET;
 const mongo_db = process.env.SHOPIFY_MONGO_DB;
 const shopifyAppModel = require('./../models/shopify_app');
 const scopes = 'read_content,write_content,read_themes,write_themes';
-const forwardingAddress = "https://08fcf94f.ngrok.io"; // Replace this with your HTTPS Forwarding address
+const forwardingAddress = "https://shopify1.llank.com"; // Replace this with your HTTPS Forwarding address
 
 //middleware
 function middleware(req, res, next) {
