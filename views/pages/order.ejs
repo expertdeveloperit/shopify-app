@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Order Track</title>
+	<link href="<% forwardingAddress %> /css/style.css" rel="stylesheet">
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+	<div class="">
+		<div class="container">
+			<div class="row">
+				<%if (!found) { %>	
+					<div class="order-form">
+						<h2 class="text-center">Find Order Detail</h2>
+						<%if (error) { %>
+							<div class="alert alert-danger">
+							  	<p><%= data %></p>
+							</div>
+						<% } %>	
+						 <form class="form-horizontal" method="POST" action="/order">
+						 	<div class="form-group">
+						      <label class="control-label" for="pwd">Order Id:</label>
+						      <div class="">          
+						    	<select required class="form-control" name="store" >
+						    		<option>Select</option>
+						    		<% stores.forEach(function(store){ %>
+						    			<option value="<%= store._id %>"  
+						    			<%if (typeof storeid != 'undefined' ){ %> 
+						    				<%if(storeid == store._id ) { %> 
+							    				selected
+							    		 <% }
+							    		} %> 
+							    		> 
+							    		<%= store.storeInfo.domain %>					    		
+							    		</option>
+						    		<% }); %>	
+						    	</select>
+						      </div>
+						    </div>
+						 	<div class="form-group">
+						      <label class="control-label" for="pwd">Order Id:</label>
+						      <div class="">          
+						        <input type="text" class="form-control" id="pwd" placeholder="Enter Order Id" name="order_id" required="" value="<%if(typeof order_id != 'undefined'){%><%=order_id%><%}%>">
+						      </div>
+						    </div>
+						    <div class="form-group">
+						      <label class="control-label" for="email">Email:</label>
+						      <div class="">
+						        <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required="" value="<%if (typeof email != 'undefined' ) { %> <%= email %> <% } %>">
+						      </div>
+						    </div>
+						    <div class="form-group">        
+						      <div class="">
+						        <button type="submit" class="btn btn-default">Submit</button>
+						      </div>
+						    </div>
+						  </form>
+					</div>  
+					<% }else{ %>	  
+						<h2>Order Detail (#<%= data.id %>) <a href="/order" class="btn btn-primary pull-right">Clear</a></h2>
+						<div class="col-md-12">
+							<div class="col-md-6">
+								<h4>Basic Information </h4>
+								<table class="table table-bordered">
+								    <tbody>
+								      <tr>
+								        <th>Name</th>
+								        <td><%= data.customer.first_name%> <%= data.customer.last_name%></td>
+								      </tr>
+								      <tr>
+								        <th>Email</th>
+								        <td><%= data.email %></td>
+								      </tr>
+								      <tr>
+								        <th>Order Date:</th>
+								        <td><%= data.created_at %></td>
+								      </tr>
+								      <tr>
+								        <th>Sub Total</th>
+								        <td><%= data.subtotal_price %></td>
+								      </tr>
+								      <tr>
+								        <th>Tax</th>
+								        <td><%= data.total_tax %></td>
+								      </tr>
+								      <tr>
+								        <th>Order Total</th>
+								        <td><%= data.total_price %></td>
+								      </tr>
+								    </tbody>
+								  </table>
+								</div> 
+								<div class="col-md-6">
+								<%if (data.fulfillments.length > 0 ){ %> 
+									<h4>Fulfillments</h4>
+									<table class="table table-bordered">
+									    <tbody>
+									    	<% data.fulfillments.forEach(function(fulfillment){ %>
+										  		<tr>
+											        <th>Tracking Company</th>
+											        <td><%= fulfillment.tracking_company %></td>
+											    </tr>
+											    <tr>
+											        <th>Tracking Number</th>
+											        <td><%= fulfillment.tracking_number %></td>
+											    </tr>
+											    <tr>
+											        <th>Shipment Status</th>
+											        <td><%= fulfillment.shipment_status %></td>
+											    </tr>
+										    <% }) %>
+									    </tbody>
+									</table>
+								<% } %>	
+								<h4>Order Items</h4>
+								<table class="table table-bordered">
+								    <tbody>
+								      <% data.line_items.forEach(function(item){ %>
+								      		<tr>
+										        <th>Title</th>
+										        <td><%= item.title %></td>
+										    </tr>
+										    <tr>
+										        <th>Quantity</th>
+										        <td><%= item.quantity %></td>
+										    </tr>
+										    <tr>
+										        <th>Price</th>
+										        <td><%= item.price %></td>
+										    </tr>
+								      <% }) %>
+								    </tbody>
+								  </table>
+								</div> 
+							</div> 
+							<div class="col-md-12">
+								<div class="col-md-6">
+									<h4>Billing Information </h4>
+									<table class="table table-bordered">
+									    <tbody>
+									      <tr>
+									        <th>Name </th>
+									        <td><%= data.billing_address.first_name%> <%= data.billing_address.last_name%></td>
+									      </tr>	
+									      <tr>
+									        <th>Address </th>
+									        <td><%= data.billing_address.address1%></td>
+									      </tr>	
+									      <tr>
+									        <th>City </th>
+									        <td><%= data.billing_address.city%></td>
+									      </tr>	
+									      <tr>
+									        <th>Zip</th>
+									        <td><%= data.billing_address.zip%></td>
+									      </tr>	
+									      <tr>
+									        <th>Province </th>
+									        <td><%= data.billing_address.province%></td>
+									      </tr>	
+									      <tr>
+									        <th>Country </th>
+									        <td><%= data.billing_address.country%></td>
+									      </tr>	
+									      <tr>
+									        <th>Address </th>
+									        <td><%= data.billing_address.address1%></td>
+									      </tr>	
+									    </tbody>
+									</table>
+								</div>
+								<div class="col-md-6">
+									<h4>Shipping Information </h4>
+									<table class="table table-bordered">
+									    <tbody>
+									      <tr>
+									        <th>Name </th>
+									        <td><%= data.shipping_address.first_name%> <%= data.shipping_address.last_name%></td>
+									      </tr>	
+									      <tr>
+									        <th>Address </th>
+									        <td><%= data.shipping_address.address1%></td>
+									      </tr>	
+									      <tr>
+									        <th>City </th>
+									        <td><%= data.shipping_address.city%></td>
+									      </tr>	
+									      <tr>
+									        <th>Zip</th>
+									        <td><%= data.shipping_address.zip%></td>
+									      </tr>	
+									      <tr>
+									        <th>Province </th>
+									        <td><%= data.shipping_address.province%></td>
+									      </tr>	
+									      <tr>
+									        <th>Country </th>
+									        <td><%= data.shipping_address.country%></td>
+									      </tr>	
+									      <tr>
+									        <th>Address </th>
+									        <td><%= data.shipping_address.address1%></td>
+									      </tr>	
+									    </tbody>
+									</table>
+								</div>
+							</div>	      
+					<% } %>	
+			</div>
+		</div>
+	</div>	
+	
+</body>
+</html>

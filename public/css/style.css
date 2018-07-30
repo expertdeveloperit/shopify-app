@@ -78,7 +78,10 @@ input:checked + .slider:before {
   position: absolute;
   top: 0;
   width: auto;
-  padding: 200px 100px;
+  /*padding: 200px 100px;*/
+}
+.add-store {
+    margin-top: 15%;
 }
 .add-store .store-url {
     max-width: 50%;
@@ -89,4 +92,28 @@ input:checked + .slider:before {
 }
 .add-store p{
   text-align: center;
+}
+
+.order-form {
+    max-width: 500px;
+    margin: 10% auto 0;
+}
+.nav-con{
+    background: #ffffff75;
+    color: #000;
+    border: 0;
+    border-radius: 0 0 5px 5px;
+}
+nav.navbar a {
+    color: #000!important;
+}
+.navbar-default {
+    background-color: transparent !important;
+    border-color: transparent !important;
+}
+.navbar{
+  margin-bottom: 0 !important;
+}
+nav.navbar li:hover a {
+    color: #337ab8!important;
 }

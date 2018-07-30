@@ -14,7 +14,7 @@ const apiKey = process.env.SHOPIFY_API_KEY;
 const apiSecret = process.env.SHOPIFY_API_SECRET;
 const mongo_db = process.env.SHOPIFY_MONGO_DB;
 const shopifyAppModel = require('./../models/shopify_app');
-const scopes = 'read_content,write_content,read_themes,write_themes';
+const scopes = 'read_content,write_content,read_themes,write_themes,read_orders';
 const forwardingAddress = process.env.APP_URL; // Replace this with your HTTPS Forwarding address
 
 //middleware
@@ -48,7 +48,6 @@ router.get('/', (req, res) => {
     forwardingAddress
   });
 });
-
 
 router.get('/store', (req, res) => {
   let shop = req.query.shop.trim();
@@ -87,7 +86,6 @@ router.get('/settings',middleware, (req, res, next) => {
       }
       
       return res.status(200).send({status:true,data});
-      
 
     });
 });
@@ -103,7 +101,6 @@ router.post('/settings/update',middleware, (req, res, next) => {
   if(req.body.updateHandle){
     shopifyAppModel.findOne({'storeInfo.myshopify_domain':req.query.shop},function (err, store) {
       if(!err && store){
-        console.log(typeof store,store.date_format);
             const accessToken = store.storeInfo.accessToken ;
             const shopRequestUrl = `https://`+store.storeInfo.domain+`/admin/pages/${store.page_id}.json`;
             const shopRequestHeaders = {
@@ -182,7 +179,6 @@ router.get('/store/callback', (req, res) => {
         render:true,
         forwardingAddress
       });
-      //return res.status(400).send('HMAC validation failed');
     }
 
     // DONE: Exchange temporary code for a permanent access token
@@ -204,8 +200,6 @@ router.get('/store/callback', (req, res) => {
 
       request.get(shopRequestUrl, { headers: shopRequestHeaders })
       .then((shopResponse) => {
-        
-
         var data = JSON.parse(shopResponse);
         var storeInfo = data.shop;
         storeInfo.accessToken = accessToken;
@@ -249,9 +243,7 @@ router.get('/store/callback', (req, res) => {
           render:true,
           forwardingAddress
         });
-        //return res.redirect('https://'+shop);
-        //return res.status(200).end(shopResponse);
-
+        
       })
       .catch((error) => {
         return res.render('pages/index',{
@@ -260,11 +252,7 @@ router.get('/store/callback', (req, res) => {
           render:true,
           forwardingAddress
         });
-        //res.status(error.statusCode).send(error.error.error_description);
       });
-
-      
-      
     })
     .catch((error) => {
        return res.render('pages/index',{
@@ -273,23 +261,14 @@ router.get('/store/callback', (req, res) => {
           render:true,
           forwardingAddress
         });
-      //res.status(error.statusCode).send(error.error.error_description);
     });
-
-  } else {
+  }else {
      return res.render('pages/index',{
           err:'Required parameters missing',
           status:false,
           render:true,
           forwardingAddress
         });
-    //res.status(400).send('Required parameters missing');
   }
 });
-
-
-
-
-
-
 module.exports = router;

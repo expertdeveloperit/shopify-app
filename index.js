@@ -17,13 +17,10 @@ app.use(bodyParser.urlencoded({ extended: false }))
 const shopifyAppModel = require('./src/models/shopify_app');
 
 const shopifyApi = require('./src/routes/shopify-api');
+const orders = require('./src/routes/orders');
 const cronJob = require('./src/routes/cron-job');
 
-//settings
-const apiKey = process.env.SHOPIFY_API_KEY;
-const apiSecret = process.env.SHOPIFY_API_SECRET;
 const mongo_db = process.env.SHOPIFY_MONGO_DB;
-const scopes = 'read_content,write_content,read_themes,write_themes';
 const forwardingAddress = process.env.APP_URL; // Replace this with your HTTPS Forwarding address
 
 // cron.schedule('* */1 * * *', function(){
@@ -44,7 +41,7 @@ app.listen(process.env.PORT || 3000, () => {
 
 
 app.use(shopifyApi);
-
+app.use(orders);
 
 //cron job to setup setting when app is installed 
 cron.schedule('* */1 * * *', function(){
