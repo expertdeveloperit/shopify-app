@@ -27,63 +27,50 @@ router.get('/order', (req, res) => {
 });
 
 router.post('/order', (req, res) => {
-	let orderId = req.body.order_id.trim();
+	let orderId = req.body.order_id;
 	let requestEmail = req.body.email;
-	let storeId = req.body.store;
-	let storesList = "";
-		shopifyAppModel.find({},'storeInfo.domain',function(err,stores){
-		  	storesList = stores;
-	  	});
-		shopifyAppModel.findOne({'_id':storeId},function (err, store) {
-		
-		if(store && !err){   
-	    	const shopRequestUrl = `https://`+store.storeInfo.myshopify_domain+`/admin/orders/`+orderId+`.json`;
-		    const accessToken = store.storeInfo.accessToken ;
-		    console.log(shopRequestUrl,"shopRequestUrl");
-		    const shopRequestHeaders = {
-		      'X-Shopify-Access-Token': accessToken,
-		    };
+	let store = req.body.store;
+	store = store.replace('http://','').replace('https://','').split(/[/?#]/)[0];
+		shopifyAppModel.findOne({'storeInfo.domain':store},function (err, store) {
+			if(store && !err){   
+		    	const shopRequestUrl = `https://`+store.storeInfo.myshopify_domain+`/admin/orders/`+orderId+`.json`;
+			    const accessToken = store.storeInfo.accessToken ;
+			    console.log(shopRequestUrl,"shopRequestUrl");
+			    const shopRequestHeaders = {
+			      'X-Shopify-Access-Token': accessToken,
+			    };
 
-		    request.get(shopRequestUrl,{headers:shopRequestHeaders})
-		    .then((shopResponse) => {
-		    	let response = JSON.parse(shopResponse);
-		    	let order = response.order;
-		    	let error = true;
-		    	let data = "";
-		    	let found = true;
-		    	if(order.email == requestEmail && order ){
-		    		error = false;		
-		    		data = order;
-		    		found = true;
-		    	}else{
-		    		data = "We could't find this order.";
-		    		found = false;
-		    	}
-		    	console.log(data);
-		    	res.render('pages/order',{
-				    error,
-				    data,
-				    stores:storesList,
-				    forwardingAddress,
-				    email:requestEmail,
-				    storeid: storeId,
-				    order_id : orderId,
-				    found
-				});	
-		    }).catch((error) => {
-	        	res.render('pages/order',{
-				    error:true,
-				    data:error,
-				    stores:storesList,
-				    forwardingAddress,
-				    email:requestEmail,
-				    storeid: storeId,
-				    order_id : orderId,
-				    found:false
-				});	
-	      });
-		}
-});	
+			    request.get(shopRequestUrl,{headers:shopRequestHeaders})
+			    .then((shopResponse) => {
+			    	let response = JSON.parse(shopResponse);
+			    	let order = response.order;
+			    	let error = true;
+			    	let data = "";
+			    	let found = true;
+			    	if(order.email == requestEmail && order ){
+			    		res.status(200).json({
+				            data:order,
+				            status: true,
+				          });
+			    	}else{
+			    		res.status(200).json({
+				            data:"We could't find this order.",
+				            status: false,
+				        });
+			    	}
+			    }).catch((error) => {
+			    	res.status(500).json({
+			            data:error,
+			            status: false,
+		            });
+		        });
+			}else{
+				res.status(500).json({
+		            data:err,
+		            status: false,
+		        });
+			}
+		});	
 });
 
 module.exports = router;

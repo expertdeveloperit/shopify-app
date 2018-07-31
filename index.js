@@ -10,7 +10,7 @@ const path = require('path');
 const bodyParser = require('body-parser')
 const cron = require('node-cron');
 const mongoose = require('mongoose');
-
+var cors = require('cors');
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -38,7 +38,8 @@ app.listen(process.env.PORT || 3000, () => {
   console.log('Example app listening on port 3000!');
 });
 
-
+app.use(cors());
+app.options('*', cors());
 
 app.use(shopifyApi);
 app.use(orders);
