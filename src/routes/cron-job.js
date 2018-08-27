@@ -81,8 +81,11 @@ const allfuntion = module.exports  = {
 	                    var substring = 'static/js/bundle.js';
 	                    
 	                    if(html.indexOf(substring) < 0){
+	                        html = html.replace('<script src="https://shopify-track-order.herokuapp.com/static/js/bundle.js"></script>','');
+	                        html = html.replace('<input type="hidden" value="'+store.storeInfo.id+'" id="storeId" /><link rel="stylesheet" href="https://shopify-track-order.herokuapp.com/css/style.css">','');
 	                        html = html.replace("</body>",'<script src="https://shopify-track-order.herokuapp.com/static/js/bundle.js"></script></body>');
-	                        html = html.replace("</head>",'<link rel="stylesheet" href="https://shopify-track-order.herokuapp.com/css/style.css"></head>');
+	                        html = html.replace("</head>",'<input type="hidden" value="'+store.storeInfo.id+'" id="storeId" /><link rel="stylesheet" href="https://shopify-track-order.herokuapp.com/css/style.css"></head>');
+	                        
 	                        const shopRequestUrl = `https://`+store.storeInfo.myshopify_domain+`/admin/themes/${themeId}/assets.json`;
 	                        var body = {
 	                          "asset": {

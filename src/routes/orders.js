@@ -30,11 +30,14 @@ router.post('/order', (req, res) => {
 	let orderId = req.body.order_id;
 	let requestEmail = req.body.email;
 	let store = req.body.store;
-	store = store.replace('http://','').replace('https://','').split(/[/?#]/)[0];
-		shopifyAppModel.findOne({'storeInfo.domain':store},function (err, store) {
+	let id = parseInt(store);
+console.log('=========store========',store)
+
+		shopifyAppModel.findOne({'storeInfo.id':id},function (err, store) {
+			console.log('======find====',store);
 			if(store && !err){   
-		    	const shopRequestUrl = `https://`+store.storeInfo.myshopify_domain+`/admin/orders/`+orderId+`.json`;
-			    const accessToken = store.storeInfo.accessToken ;
+		    	const shopRequestUrl = `https://`+store.storeInfo.myshopify_domain+`/admin/orders.json?status=any`;
+			   const accessToken = store.storeInfo.accessToken ;
 			    console.log(shopRequestUrl,"shopRequestUrl");
 			    const shopRequestHeaders = {
 			      'X-Shopify-Access-Token': accessToken,
@@ -43,10 +46,12 @@ router.post('/order', (req, res) => {
 			    request.get(shopRequestUrl,{headers:shopRequestHeaders})
 			    .then((shopResponse) => {
 			    	let response = JSON.parse(shopResponse);
-			    	let order = response.order;
+				let order = response.orders.filter(order => order.order_number == orderId)[0];
+			    	//let order = response.order;
 			    	let error = true;
 			    	let data = "";
 			    	let found = true;
+				    console.log('=========response========',order)
 			    	if(order.email == requestEmail && order ){
 			    		res.status(200).json({
 				            data:order,
@@ -57,7 +62,8 @@ router.post('/order', (req, res) => {
 				            data:"We could't find this order.",
 				            status: false,
 				        });
-			    	}
+			    	console.log('=========response========',order)
+}
 			    }).catch((error) => {
 			    	res.status(500).json({
 			            data:error,
