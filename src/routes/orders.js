@@ -31,10 +31,10 @@ router.post('/order', (req, res) => {
 	let requestEmail = req.body.email;
 	let store = req.body.store;
 	let id = parseInt(store);
-console.log('=========store========',store)
+
 
 		shopifyAppModel.findOne({'storeInfo.id':id},function (err, store) {
-			console.log('======find====',store);
+		
 			if(store && !err){   
 		    	const shopRequestUrl = `https://`+store.storeInfo.myshopify_domain+`/admin/orders.json?status=any`;
 			   const accessToken = store.storeInfo.accessToken ;
